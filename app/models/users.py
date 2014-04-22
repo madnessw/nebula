@@ -9,15 +9,15 @@ class Password(TypeDecorator):
 
     class comparator_factory(String.comparator_factory):
         def __eq__(self, other):
-            local_pw = type_coerce(self.expr, String)
-            return local_pw == func.crypt(other, local_pw)
+            hash = type_coerce(self.expr, String)
+            return hash == func.crypt(other, hash)
 
 class User(Base):
     id         = Column(Integer, primary_key=True)
     email      = Column(String)
     fullname   = Column(String)
     password   = Column(Password, nullable=False)
+    role       = Column(Enum('manager', 'employee', 'client manager', 'client employee'), default='client manager')
     status     = Column(Enum('pending', 'active', 'suspended', 'deleted'), default='pending')
-    role       = Column(Enum('manager', 'employee', 'client'), default='client')
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.current_timestamp())
