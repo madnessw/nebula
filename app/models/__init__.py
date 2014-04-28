@@ -1,7 +1,11 @@
+from sqlalchemy import create_engine, Integer, TypeDecorator
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from sqlalchemy.types import TypeDecorator, Integer
 import enum
 import re
+
+_engine = create_engine('postgresql://xxx:zzz@localhost/nebula')
+Session = sessionmaker(bind=_engine)
 
 @as_declarative()
 class Base(object):
