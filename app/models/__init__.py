@@ -1,11 +1,5 @@
-from sqlalchemy import create_engine, Integer, TypeDecorator
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
-import enum
 import re
-
-_engine = create_engine('postgresql://xxx:zzz@localhost/nebula')
-Session = sessionmaker(bind=_engine)
 
 @as_declarative()
 class Base(object):
@@ -20,28 +14,3 @@ class Base(object):
             return re.sub('y$', 'ies', name)
         else:
             return name + 's'
-
-class _define_enum_type(TypeDecorator):
-    impl = Integer
-
-    def __init__(self, enum):
-        self.enum = enum
-
-    def process_bind_param(self, member, dialect):
-        assert member in self.enum
-        return member.value
-
-    def process_result_value(self, value, dialect):
-        return self.enum(value);
-
-class Enum(enum.Enum):
-    def __new__(cls):
-        value = len(cls.__members__) + 1
-        obj = object.__new__(cls)
-        obj._value_ = value
-
-        return obj
-
-    @classmethod
-    def enum_type(self):
-        return _define_enum_type(self)
